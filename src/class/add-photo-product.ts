@@ -55,7 +55,7 @@ export class AddPhotoProduct {
                          for(const photo of photosFolder){
                              const normalizedPhoto = AddPhotoProduct.normalizePhotoName(photo);
 
-                          const [ resultVerifyPhotoProduct ] = await conn2.query(`SELECT SEQ ,PRODUTO, FOTO FROM ${db_publico}.fotos_prod 
+                           const [ resultVerifyPhotoProduct ] = await conn2.query(`SELECT SEQ ,PRODUTO, CAST(FOTO AS CHAR(10000) CHARACTER SET latin1) AS FOTO FROM ${db_publico}.fotos_prod 
                            where PRODUTO = '${product.CODIGO}' AND UPPER(FOTO) = '${normalizedPhoto}';`);
 
                          const arrVerifyPhoto = resultVerifyPhotoProduct as resultVerifyPhoto[];
