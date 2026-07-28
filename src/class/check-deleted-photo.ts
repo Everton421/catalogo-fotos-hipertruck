@@ -1,16 +1,34 @@
- import path from 'node:path';
+import path from 'node:path';
 import { conn2, db_publico } from '../database/mysql-connection.ts';
 import fs from 'node:fs/promises'
 
 
 type resultVerifyPhoto = { SEQ:number, FOTO:string,PRODUTO:number}
 
- 
 
-export class CheckDeletedPhotos { 
+export class CheckDeletedPhotos {
+
+    private static normalizePhotoName(filename: string): string {
+        const ext = path.extname(filename).toUpperCase();
+        const name = path.basename(filename, path.extname(filename));
+        return `${name}${ext}`;
+    }
+
+    private static fixMojibake(filename: string): string {
+        try {
+            const buf = Buffer.from(filename, 'latin1');
+            const decoded = buf.toString('utf-8');
+            if (decoded !== filename && /[^\x00-\x7F]/.test(decoded)) {
+                return decoded;
+            }
+        } catch {
+            return filename;
+        }
+        return filename;
+    }
 
     static async verify(code:number,pathPhotos:string){
-   
+    
          const pastaMonitorada = path.resolve(pathPhotos);
          const datafolder = await fs.readdir(pastaMonitorada)
 
@@ -21,24 +39,36 @@ export class CheckDeletedPhotos {
 
                           if(arrVerifyPhoto.length > 0 ){
                             for(const photo of arrVerifyPhoto){
+                                const normalizedName = CheckDeletedPhotos.normalizePhotoName(photo.FOTO);
 
-
-                                    const photofiltered =   datafolder.filter(   (photofolder)  =>{ 
-                                        photofolder == photo.FOTO ? photo.FOTO : null
-                                        if(photofolder == photo.FOTO){
-                                            return photo.FOTO;
-                                        }else{
-                                            return null;
-                                        }
+                                    const foundOnDisk = datafolder.some((photofolder) =>{
+                                        const normalizedFolder = CheckDeletedPhotos.normalizePhotoName(photofolder);
+                                        return normalizedFolder === normalizedName;
                                     })
-                                    
-                                    if(photofiltered.length > 0 ){
+
+                                    if(foundOnDisk){
                                             console.log(`[V] Foto encontrada ${photo.FOTO}... `);
                                         continue;
-                                    }else{
-                                            console.log(`[X] Foto ${photo.FOTO} não foi encontrada na pasta, efetuando exclusão`);
-                                        await conn2.query(`DELETE FROM ${db_publico}.fotos_prod WHERE PRODUTO = '${photo.PRODUTO}' AND SEQ = '${photo.SEQ}' AND FOTO= '${photo.FOTO}' `)
                                     }
+
+                                    const correctedName = CheckDeletedPhotos.fixMojibake(normalizedName);
+
+                                    if (correctedName !== normalizedName) {
+                                        const foundAfterFix = datafolder.some((photofolder) => {
+                                            const normalizedFolder = CheckDeletedPhotos.normalizePhotoName(photofolder);
+                                            return normalizedFolder === correctedName;
+                                        });
+
+                                        if (foundAfterFix) {
+                                            console.log(`[X] Foto ${photo.FOTO} com encoding corrompido, excluindo vínculo`);
+                                            await conn2.query(`DELETE FROM ${db_publico}.fotos_prod WHERE PRODUTO = '${photo.PRODUTO}' AND SEQ = '${photo.SEQ}' AND FOTO= '${photo.FOTO}' `)
+                                            continue;
+                                        }
+                                    }
+
+                                    console.log(`[X] Foto ${photo.FOTO} não foi encontrada na pasta, efetuando exclusão`);
+                                    await conn2.query(`DELETE FROM ${db_publico}.fotos_prod WHERE PRODUTO = '${photo.PRODUTO}' AND SEQ = '${photo.SEQ}' AND FOTO= '${photo.FOTO}' `)
+
                                 }
                             }else{
                                 
