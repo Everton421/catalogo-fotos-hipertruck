@@ -19,6 +19,7 @@ import mysql from 'mysql2/promise';
             user: String(username),
             port: portdb,
             password: String(dbpassword),
+             charset: 'latin1',
         })
 
 /**----------------------------------------------------------------------- */

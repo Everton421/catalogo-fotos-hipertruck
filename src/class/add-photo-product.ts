@@ -11,6 +11,12 @@ type resultVerifyPhoto = { SEQ:number, FOTO:string,PRODUTO:number}
 export class AddPhotoProduct {
 
 
+    private static normalizePhotoName(filename: string): string {
+        const ext = path.extname(filename).toUpperCase();
+        const name = path.basename(filename, path.extname(filename));
+        return `${name}${ext}`;
+    }
+
     static async add(PathPhotosErp:string){
     const SQL = `SELECT CODIGO, OUTRO_COD, NUM_ORIGINAL  FROM ${db_publico}.cad_prod
      WHERE 
@@ -46,21 +52,22 @@ export class AddPhotoProduct {
                      };
                  })
                  
-                        for(const photo of photosFolder){
-                             
+                         for(const photo of photosFolder){
+                             const normalizedPhoto = AddPhotoProduct.normalizePhotoName(photo);
+
                           const [ resultVerifyPhotoProduct ] = await conn2.query(`SELECT SEQ ,PRODUTO, FOTO FROM ${db_publico}.fotos_prod 
-                           where PRODUTO = '${product.CODIGO}' AND FOTO = '${photo}';`);
+                           where PRODUTO = '${product.CODIGO}' AND UPPER(FOTO) = '${normalizedPhoto}';`);
 
                          const arrVerifyPhoto = resultVerifyPhotoProduct as resultVerifyPhoto[];
                             if(arrVerifyPhoto.length > 0 ){
-                                console.log(`[V] Foto ${photo} já foi registrada.`)
+                                console.log(`[V] Foto ${normalizedPhoto} já foi registrada.`)
                             }else{
                                      const [ resultMaxSequenc ] = await conn2.query(`SELECT MAX(SEQ) SEQ  FROM ${db_publico}.fotos_prod where PRODUTO = '${product.CODIGO}';`);
                             const maxSequenc = resultMaxSequenc as [{SEQ:number}]      
                             const seq = maxSequenc[0].SEQ && maxSequenc[0].SEQ > 0  ? maxSequenc[0].SEQ + 1 : 1 
 
                                 const sqlInsert = `INSERT INTO ${db_publico}.fotos_prod set produto = '${product.CODIGO}', 
-                                    seq = '${seq}', descricao = '${product.NUM_ORIGINAL}', FOTO = '${photo}';`;
+                                    seq = '${seq}', descricao = '${product.NUM_ORIGINAL}', FOTO = '${normalizedPhoto}';`;
 
                                 const [ resultInsert ] = await conn2.query(sqlInsert)
 
