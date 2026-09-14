@@ -34,7 +34,7 @@ export class JobPhotos{
                     
                     for(const photo of dataPhotosToSend ){
                             await delay(2000, ` envio de fotos `)
-                        const resultUploadPhoto = await this.uploadPhotosProductService.upload(photo.PRODUTO, photo.SEQ, dataPathPhotos.FOTOS );
+                        const resultUploadPhoto = await this.uploadPhotosProductService.upload(photo.PRODUTO, photo.SEQ, dataPathPhotos.FOTOS, photo.FOTO! );
                             if(resultUploadPhoto){
                                 console.log(`[V] Foto do produto ${photo.PRODUTO}, sequencia: ${photo.SEQ} enviada com sucesso!`)
                             }

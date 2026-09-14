@@ -18,11 +18,11 @@ export class UploadPhotosProductService{
          this.photosProductDataAcess= photosProductDataAcess;
     }
  
-    async upload( product:number, sequence:number, pathPhotosERP:string, photoProduct:string ){
+    async upload( product:number, sequence:number, basePath:string,  fileName:string ){
             try{
-                const photosERP = path.resolve(pathPhotosERP);
+                const pathPhotoProduct = path.resolve(basePath, fileName);
 
-                    const base64Photo= await fs.readFile( path.join(photosERP,photoProduct), 'base64' );
+                    const base64Photo= await fs.readFile( pathPhotoProduct, 'base64' );
                     const link = await this.driver.upload(base64Photo);
                     
                     if(link){
@@ -30,11 +30,9 @@ export class UploadPhotosProductService{
                     }
                 return link
             }catch(e:any){
+                console.log(e.response)
                 throw new Error(e);
-                console.log(e)
             }
-
         }   
-
 
 }

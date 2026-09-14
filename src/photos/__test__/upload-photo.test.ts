@@ -21,9 +21,12 @@ try {
     );
 
             const dataPathPhotos = await photosProductDataAcess.findPathphotos();
+            const photo = await photosProductDataAcess.findPhotosProduct({
+               PRODUTO:10688,
+               SEQ:1
+            });
     
-    const result = await uploadPhotosProductService.upload(10688, 1, dataPathPhotos.FOTOS, 'FOTOS NOVAS\RP13411.png')
-
+    const result = await uploadPhotosProductService.upload(10688, 1,dataPathPhotos.FOTOS,  photo[0].FOTO!)
    console.log(result) 
  
 } catch (error) {
