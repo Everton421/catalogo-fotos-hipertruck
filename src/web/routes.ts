@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Router } from "express";
-import { conn2, db_publico, db_vendas } from "./database/mysql-connection.ts";
+import { conn2, db_publico, db_vendas } from "../database/mysql-connection.ts";
 import path from 'node:path';
 
 const router = Router();

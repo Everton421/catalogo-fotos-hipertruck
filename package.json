@@ -5,7 +5,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "node --env-file=.env --experimental-strip-types  src/server.ts" 
+    "dev": "node --env-file=.env --experimental-strip-types  src/server.ts",
+    "teste:photos-product-data-acess" :"node --env-file=.env --experimental-strip-types  src/photos/__test__/photos-product-data-acess.test.ts",
+    "teste:upload-photo" :"node --env-file=.env --experimental-strip-types  src/photos/__test__/upload-photo.test.ts" 
+    
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -18,7 +21,6 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@shopify/admin-api-client": "^1.1.1",
     "@types/axios": "^0.14.0",
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",

@@ -3,16 +3,19 @@ import "express-async-errors";
 import cors from 'cors';
 import 'dotenv/config';
 import path from 'path'; 
-import { router } from './routes.ts';
-import { JobPhotos } from './job/photo-job.ts';
+import { router } from './web/routes.ts';
+import { JobPhotos } from './photos/job/job-verify-photos.ts';
+import { PhotosProductDataAcess } from './photos/data/photos-product-data-acess.ts';
+import { conn2, db_publico, db_vendas } from './database/mysql-connection.ts';
+import { UploadIMGBB } from './photos/lib/imgbb.ts';
+import { UploadPhotosProductService } from './photos/services/upload-photo-service.ts';
  
         const app = express();
-
              app.use(express.json({ limit: '150mb' })); 
             app.use(express.urlencoded({ limit: '150mb', extended: true }));
 
       app.set('view engine', 'ejs');
-      app.set('views', path.join(import.meta.dirname!, 'Views'));
+      app.set('views', path.join(import.meta.dirname!, 'web/Views'));
         app.use(express.static(path.join(import.meta.dirname!,  'public')));
 
         
@@ -33,7 +36,17 @@ import { JobPhotos } from './job/photo-job.ts';
                     })
                 })
 
-           await JobPhotos.exec();
+        /******************/
+        if(!db_publico || !db_vendas || !process.env.APIKEY_IMGBB){
+
+        }else{
+            const  dataAcess = new PhotosProductDataAcess(conn2 as any, db_publico, db_vendas ) ;
+            const  uploadPhotosProductService = new UploadPhotosProductService(   new UploadIMGBB(process.env.APIKEY_IMGBB),   dataAcess ) 
+            const job = new JobPhotos(dataAcess, uploadPhotosProductService);
+            await job.exec();
+        }
+
+        /******************/
 
                 const PORT_API = process.env.PORT_API; // Porta padrão para HTTPS
 
