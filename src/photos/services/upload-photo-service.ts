@@ -36,6 +36,7 @@ export class UploadPhotosProductService{
                 return link
             }catch(e:any){
                 throw new Error(e);
+                console.log(e)
             }
 
         }   
