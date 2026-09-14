@@ -22,8 +22,8 @@ try {
 
             const dataPathPhotos = await photosProductDataAcess.findPathphotos();
     
-    const result = await uploadPhotosProductService.upload(10688, 1, dataPathPhotos.FOTOS)
-    
+    const result = await uploadPhotosProductService.upload(10688, 1, dataPathPhotos.FOTOS, 'FOTOS NOVAS\RP13411.png')
+
    console.log(result) 
  
 } catch (error) {

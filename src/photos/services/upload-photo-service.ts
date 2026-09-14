@@ -18,16 +18,11 @@ export class UploadPhotosProductService{
          this.photosProductDataAcess= photosProductDataAcess;
     }
  
-    async upload( product:number, sequence:number, pathPhotosERP:string ){
+    async upload( product:number, sequence:number, pathPhotosERP:string, photoProduct:string ){
             try{
                 const photosERP = path.resolve(pathPhotosERP);
-                const datafolder = await fs.readdir(photosERP);
-                    if(!datafolder.length){
-                         throw new Error(`[V] Não foi encontrado foto do produto ${product} sequencia: ${sequence}`);
-                    }
-                    const photo = datafolder[0];
 
-                    const base64Photo= await fs.readFile( path.join(photosERP,photo), 'base64' );
+                    const base64Photo= await fs.readFile( path.join(photosERP,photoProduct), 'base64' );
                     const link = await this.driver.upload(base64Photo);
                     
                     if(link){
