@@ -40,7 +40,8 @@ export class JobPhotos{
                                 console.log(`[V] Foto do produto ${photo.PRODUTO}, sequencia: ${photo.SEQ} enviada com sucesso!`)
                             }
                         }catch(e){
-                        console.log(e)
+                            console.log(`[X] Erro ao enviar foto do produto ${photo.PRODUTO} sequencia ${photo.SEQ}`)
+                            console.log(e)
                         }
                        
                     }
