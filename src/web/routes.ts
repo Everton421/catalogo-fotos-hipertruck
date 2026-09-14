@@ -33,6 +33,16 @@ router.get('/foto/:filename', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
+
+
+
+  const fotoPathConfig = await getFotoPath();
+
+// Garante que o caminho termine com uma barra para concatenar corretamente (ex: C:/FOTOS/)
+const baseFotoPath = fotoPathConfig.endsWith('/') || fotoPathConfig.endsWith('\\') 
+  ? fotoPathConfig 
+  : fotoPathConfig + '/';
+
   const search = (req.query.search as string) || '';
   const grupo = (req.query.grupo as string) || '';
   const subgrupo = (req.query.subgrupo as string) || '';
@@ -89,19 +99,27 @@ router.get('/', async (req, res) => {
     const totalRegistros = (countResult as any[])[0]?.total || 0;
     const totalPages = Math.ceil(totalRegistros / limit) || 1;
 
-    const [products] = await conn2.query(
-      `SELECT p.CODIGO, p.DESCRICAO, p.DESCR_CURTA_MKTPLACE, p.NUM_ORIGINAL,
-              COUNT(f.SEQ) as QTD_FOTOS,
-              CAST(GROUP_CONCAT(f.FOTO ORDER BY f.SEQ ASC SEPARATOR '||') AS CHAR) as FOTOS
-       FROM ${db_publico}.cad_prod p
-       ${joinType} ${db_publico}.fotos_prod f ON f.PRODUTO = p.CODIGO
-       WHERE ${whereClause}
-       GROUP BY p.CODIGO
-       ORDER BY p.CODIGO
-       LIMIT ? OFFSET ?`,
-      [...params, limit, offset]
-    );
 
+      const querySQL = `
+        SELECT p.CODIGO, p.DESCRICAO, p.DESCR_CURTA_MKTPLACE, p.NUM_ORIGINAL,
+              COUNT(f.SEQ) as QTD_FOTOS,
+              CAST(GROUP_CONCAT(CONCAT(?, f.FOTO) ORDER BY f.SEQ ASC SEPARATOR '||') AS CHAR) as FOTOS
+        FROM ${db_publico}.cad_prod p
+        ${joinType} ${db_publico}.fotos_prod f ON f.PRODUTO = p.CODIGO
+        WHERE ${whereClause}
+        GROUP BY p.CODIGO
+        ORDER BY p.CODIGO
+        LIMIT ? OFFSET ?
+      `;
+
+      console.log(querySQL);
+      console.log(baseFotoPath);
+
+      let [products] = await conn2.query(
+        querySQL,
+        [baseFotoPath, ...params, limit, offset]
+      );
+   
     const [grupos] = await conn2.query(
       `SELECT CODIGO, NOME FROM ${db_publico}.cad_pgru ORDER BY NOME`
     );

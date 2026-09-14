@@ -73,7 +73,7 @@
                                 <div class="col-md-2">
                                     <label class="form-label small mb-1">Marca</label>
                                     <select name="marca" class="form-select">
-                                        <option value="3"> COMPRE PEÇAS</option>
+                                        <option value=""> Todas</option>
                                         <% if (typeof marcas !== 'undefined') { marcas.forEach(m => { %>
                                             <option value="<%= m.CODIGO %>" <%= filters.marca == m.CODIGO ? 'selected' : '' %>><%= m.DESCRICAO %></option>
                                         <% }); } %>
