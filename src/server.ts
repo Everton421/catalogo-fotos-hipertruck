@@ -9,6 +9,8 @@ import { PhotosProductDataAcess } from './photos/data/photos-product-data-acess.
 import { conn2, db_publico, db_vendas } from './database/mysql-connection.ts';
 import { UploadIMGBB } from './photos/lib/imgbb.ts';
 import { UploadPhotosProductService } from './photos/services/upload-photo-service.ts';
+import { Seed } from './database/seed.ts';
+import { Pool } from 'mysql2';
  
         const app = express();
              app.use(express.json({ limit: '150mb' })); 
@@ -46,6 +48,11 @@ import { UploadPhotosProductService } from './photos/services/upload-photo-servi
             await job.exec();
         }
 
+        /******************/
+
+        /******* SEED *********/
+        // const seed = new Seed(conn2 as any);
+        //  await seed.exe(`hipertruck_teste_catalogo`);
         /******************/
 
                 const PORT_API = process.env.PORT_API; // Porta padrão para HTTPS
