@@ -112,8 +112,6 @@ const baseFotoPath = fotoPathConfig.endsWith('/') || fotoPathConfig.endsWith('\\
         LIMIT ? OFFSET ?
       `;
 
-      console.log(querySQL);
-      console.log(baseFotoPath);
 
       let [products] = await conn2.query(
         querySQL,
