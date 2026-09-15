@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import { PhotosProductDataAcess } from '../data/photos-product-data-acess.ts';
 import { UploadPhotosProductService } from '../services/upload-photo-service.ts';
 import { delay } from '../../utils/delay.ts';
+import { isAxiosError } from 'axios';
 
 export class JobPhotos{
     private photosProductDataAcess:PhotosProductDataAcess;
@@ -34,16 +35,25 @@ export class JobPhotos{
                     
                     for(const photo of dataPhotosToSend ){
                         try{
-                              await delay(2500, ` envio de fotos `)
+                              await delay(2500, `Envio de imagen`)
                         const resultUploadPhoto = await this.uploadPhotosProductService.upload(photo.PRODUTO, photo.SEQ, dataPathPhotos.FOTOS, photo.FOTO! );
                             if(resultUploadPhoto){
                                 console.log(`[V] Foto do produto ${photo.PRODUTO}, sequencia: ${photo.SEQ} enviada com sucesso!`)
                             }
                         }catch(e){
-                            console.log(`[X] Erro ao enviar foto do produto ${photo.PRODUTO} sequencia ${photo.SEQ}`)
-                            console.log(e)
+                             if(isAxiosError(e)){
+                                     console.log(e.response) 
+                                     if(e.response?.status == 400 && e.response?.data.error.message == 'Rate limit reached.'){
+                                        await delay(5000, 'Envio de imagen')
+                                     }  
+                                  }else{
+                                     if( e instanceof Error){
+                                        console.log( e.message) 
+                                     }else{
+                                        console.log( e) 
+                                     }
+                                  }
                         }
-                       
                     }
 
             } catch (e) {

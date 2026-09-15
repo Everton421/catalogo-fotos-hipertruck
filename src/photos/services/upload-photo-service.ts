@@ -22,17 +22,32 @@ export class UploadPhotosProductService{
             try{
                 const pathPhotoProduct = path.resolve(basePath, fileName);
 
-                    const base64Photo= await fs.readFile( pathPhotoProduct, 'base64' );
-                    const link = await this.driver.upload(base64Photo);
-                    
-                    if(link){
-                        await this.photosProductDataAcess.updateLinkPhotoProduct(link, product, sequence)
-                    }
-                return link
+                 const isExistsPhoto = await this.checkFileExists(pathPhotoProduct) 
+
+                     if(!isExistsPhoto ){
+                            throw new Error(`[X] imagen seq: ${sequence} do produto: ${product} não foi encontrada. `);
+                        }
+
+                     const base64Photo= await fs.readFile( pathPhotoProduct, 'base64' );
+                       
+                     const link = await this.driver.upload(base64Photo);
+                     
+                     if(link){
+                         await this.photosProductDataAcess.updateLinkPhotoProduct(link, product, sequence)
+                     }
+                return 'link'
             }catch(e:any){
-                console.log(e.response)
                 throw new Error(e);
             }
         }   
+
+    private async checkFileExists(filePath:string){
+        try {
+                await fs.access(filePath);
+            return true
+        } catch (error) {
+                return false
+        }
+    }
 
 }
