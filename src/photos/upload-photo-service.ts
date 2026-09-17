@@ -1,8 +1,8 @@
 
 import   fs   from 'node:fs/promises';
 import path from 'node:path';
-import { UploadPhotoDriver } from '../driver/upload-img.ts';
-import { PhotosProductDataAcess } from '../data/photos-product-data-acess.ts';
+import { UploadPhotoDriver } from './driver/upload-img.ts';
+import { PhotosProductDataAcess } from './photos-product-data-acess.ts';
 
 
 
@@ -18,6 +18,14 @@ export class UploadPhotosProductService{
          this.photosProductDataAcess= photosProductDataAcess;
     }
  
+    /**
+     *  Envia a foto para o host online e injeta o link na foto do banco de dados 
+     * @param product 
+     * @param sequence 
+     * @param basePath 
+     * @param fileName 
+     * @returns 
+     */
     async upload( product:number, sequence:number, basePath:string,  fileName:string ){
             try{
                 const pathPhotoProduct = path.resolve(basePath, fileName);
@@ -35,7 +43,7 @@ export class UploadPhotosProductService{
                      if(link){
                          await this.photosProductDataAcess.updateLinkPhotoProduct(link, product, sequence)
                      }
-                return 'link'
+                return link
             }catch(e:any){
                 throw new Error(e);
             }

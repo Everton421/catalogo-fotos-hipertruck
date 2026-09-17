@@ -4,11 +4,11 @@ import cors from 'cors';
 import 'dotenv/config';
 import path from 'path'; 
 import { router } from './web/routes.ts';
-import { JobPhotos } from './photos/job/job-verify-photos.ts';
-import { PhotosProductDataAcess } from './photos/data/photos-product-data-acess.ts';
+import { JobPhotos } from './photos/job-verify-photos.ts';
+import { PhotosProductDataAcess } from './photos/photos-product-data-acess.ts';
 import { conn2, db_publico, db_vendas } from './database/mysql-connection.ts';
 import { UploadIMGBB } from './photos/lib/imgbb.ts';
-import { UploadPhotosProductService } from './photos/services/upload-photo-service.ts';
+import { UploadPhotosProductService } from './photos/upload-photo-service.ts';
 import { Seed } from './database/seed.ts';
 import { Pool } from 'mysql2';
  

@@ -1,6 +1,6 @@
 
 import mysql, { Pool, type ResultSetHeader } from 'mysql2';
-import { type TableFotosProd } from '../interfaces/tabel_fotos_prod.ts';
+import { type TableFotosProd } from './interfaces/tabel_fotos_prod.ts';
 
 export class PhotosProductDataAcess{
     private connection:   Pool; 
@@ -61,6 +61,10 @@ export class PhotosProductDataAcess{
              return  resultQuery as  TableFotosProd[]; 
       } 
 
+        /**
+         * 
+         * @returns Retorna o caminho das fotos na tabela de parametros do sistema
+         */
       async findPathphotos(){
             const [result] = await this.connection.query(`SELECT 
                 CAST(FOTOS AS CHAR(10000) CHARACTER SET latin1) AS FOTOS

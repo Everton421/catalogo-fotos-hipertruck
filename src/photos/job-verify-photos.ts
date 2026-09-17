@@ -1,7 +1,7 @@
 import cron from 'node-cron';
-import { PhotosProductDataAcess } from '../data/photos-product-data-acess.ts';
-import { UploadPhotosProductService } from '../services/upload-photo-service.ts';
-import { delay } from '../../utils/delay.ts';
+import { PhotosProductDataAcess } from './photos-product-data-acess.ts';
+import { UploadPhotosProductService } from './upload-photo-service.ts';
+import { delay } from '../utils/delay.ts';
 import { isAxiosError } from 'axios';
 
 export class JobPhotos{
