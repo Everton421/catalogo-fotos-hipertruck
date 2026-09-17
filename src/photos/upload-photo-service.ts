@@ -35,7 +35,6 @@ export class UploadPhotosProductService{
                      if(!isExistsPhoto ){
                             throw new Error(`[X] imagen seq: ${sequence} do produto: ${product} não foi encontrada. `);
                         }
-
                      const base64Photo= await fs.readFile( pathPhotoProduct, 'base64' );
                        
                      const link = await this.driver.upload(base64Photo);

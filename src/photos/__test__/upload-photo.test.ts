@@ -32,7 +32,7 @@ try {
            const t=  path.join( basePathTest ,pathImgTest )
             fs.access(t).then(()=>console.log("OK, img encontrada.")).catch((e)=>console.log(e))
 
-            const result = await uploadPhotosProductService.upload(10688, 2, 
+            const result = await uploadPhotosProductService.upload(11371, 1, 
                  basePathTest,
                    pathImgTest
                  )
